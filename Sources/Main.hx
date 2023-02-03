@@ -72,8 +72,8 @@ class Main {
 				kha.Assets.loadBlobFromPath("data/themes/dark.json", function(blob_theme: kha.Blob) {
 					kha.Assets.loadBlobFromPath("data/text_coloring.json", function(blob_coloring: kha.Blob) {
 						ui = new Zui({ theme: haxe.Json.parse(blob_theme.toString()), font: font });
-						Zui.onBorderHover = onBorderHover;
-						Zui.onTextHover = onTextHover;
+						Zui.onBorderHover = on_border_hover;
+						Zui.onTextHover = on_text_hover;
 						Ext.textAreaColoring = haxe.Json.parse(blob_coloring.toString());
 						System.notifyOnFrames(render);
 					});
@@ -251,7 +251,7 @@ class Main {
 		return mx > x && mx < x + w && my > y && my < y + h;
 	}
 
-	static function onBorderHover(handle: Zui.Handle, side: Int) {
+	static function on_border_hover(handle: Zui.Handle, side: Int) {
 		if (handle != sidebar_handle) return;
 		if (side != 1) return; // Right
 
@@ -262,7 +262,7 @@ class Main {
 		}
 	}
 
-	static function onTextHover() {
+	static function on_text_hover() {
 		Krom.setMouseCursor(2); // I-cursor
 	}
 }
