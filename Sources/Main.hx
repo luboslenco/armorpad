@@ -164,17 +164,7 @@ class Main {
 
 				// Save
 				if (ui.isCtrlDown && ui.key == kha.input.KeyCode.S) {
-					// Trim
-					var lines = storage.text.split("\n");
-					for (i in 0...lines.length) lines[i] = StringTools.rtrim(lines[i]);
-					storage.text = lines.join("\n");
-					// Spaces to tabs
-					storage.text = StringTools.replace(storage.text, "    ", "\t");
-					text_handle.text = storage.text;
-					// Write bytes
-					var bytes = haxe.io.Bytes.ofString(storage.text);
-					Krom.fileSaveBytes(storage.file, bytes.getData(), bytes.length);
-					storage.modified = false;
+					save_file();
 				}
 
 				storage.text = Ext.textArea(ui, text_handle);
@@ -204,6 +194,12 @@ class Main {
 			redraw = true;
 		}
 
+		// Build project
+		if (ui.isCtrlDown && ui.key == kha.input.KeyCode.B) {
+			save_file();
+			build_project();
+		}
+
 		ui.end();
 
 		if (redraw) {
@@ -219,6 +215,29 @@ class Main {
 		if (editor_updated) {
 			draw_minimap();
 		}
+	}
+
+	static function save_file() {
+		// Trim
+		var lines = storage.text.split("\n");
+		for (i in 0...lines.length) lines[i] = StringTools.rtrim(lines[i]);
+		storage.text = lines.join("\n");
+		// Spaces to tabs
+		storage.text = StringTools.replace(storage.text, "	", "\t");
+		text_handle.text = storage.text;
+		// Write bytes
+		var bytes = haxe.io.Bytes.ofString(storage.text);
+		Krom.fileSaveBytes(storage.file, bytes.getData(), bytes.length);
+		storage.modified = false;
+	}
+
+	static function build_project() {
+		#if krom_windows
+		var build_file = "\\build.bat";
+		#else
+		var build_file = "/build.sh";
+		#end
+		Krom.sysCommand(storage.project + build_file + " " + storage.project);
 	}
 
 	static function draw_minimap() {
