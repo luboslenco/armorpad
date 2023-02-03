@@ -1,23 +1,5 @@
 package;
 
-// Scroll on line delete
-// Scroll on arrow keys
-// New line via ctrl c + v
-// Auto indent
-// Tab, shift+tab
-// Multi line tab
-// Ctrl+d selection
-// Multi line selection
-// Build console
-// Find
-// Ctrl arrows
-// Code complete
-// Code references in files popup
-// Ctrl+p popup
-// Ctrl+shift+p popup - open containing folder, reveal in sidebar, new file, remove file, rename file, build, build command
-// Undo
-// Resize minimap
-
 import kha.Window;
 import kha.System;
 import kha.Storage;
