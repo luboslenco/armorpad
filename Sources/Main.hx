@@ -223,7 +223,7 @@ class Main {
 		for (i in 0...lines.length) lines[i] = StringTools.rtrim(lines[i]);
 		storage.text = lines.join("\n");
 		// Spaces to tabs
-		storage.text = StringTools.replace(storage.text, "	", "\t");
+		storage.text = StringTools.replace(storage.text, "    ", "\t");
 		text_handle.text = storage.text;
 		// Write bytes
 		var bytes = haxe.io.Bytes.ofString(storage.text);
