@@ -28,6 +28,8 @@ class Main {
 	static var storage: TStorage = null;
 	static var resizing_sidebar = false;
 	static var minimap_w = 150;
+	static var minimap_h = 0;
+	static var minimap_scrolling = false;
 	static var minimap: kha.Image = null;
 	static var window_header_h = 0;
 
@@ -89,8 +91,6 @@ class Main {
 				storage_file.writeObject(storage);
 			}
 		);
-
-		minimap = kha.Image.createRenderTarget(minimap_w, System.windowHeight());
 	}
 
 	static function list_folder(path: String) {
@@ -138,15 +138,21 @@ class Main {
 		ui.begin(g);
 
 		if (ui.window(sidebar_handle, 0, 0, storage.sidebar_w, System.windowHeight(), false)) {
+			var _BUTTON_TEXT_COL = ui.t.BUTTON_TEXT_COL;
+			ui.t.BUTTON_TEXT_COL = ui.t.ACCENT_COL;
 			if (storage.project != "") {
-				var _BUTTON_TEXT_COL = ui.t.BUTTON_TEXT_COL;
-				ui.t.BUTTON_TEXT_COL = ui.t.ACCENT_COL;
 				list_folder(storage.project);
-				ui.t.BUTTON_TEXT_COL = _BUTTON_TEXT_COL;
 			}
+			else {
+				ui.button("Drop folder here", Left);
+			}
+			ui.t.BUTTON_TEXT_COL = _BUTTON_TEXT_COL;
 		}
 
+		var editor_updated = false;
+
 		if (ui.window(editor_handle, storage.sidebar_w, 0, System.windowWidth() - storage.sidebar_w - minimap_w, System.windowHeight(), false)) {
+			editor_updated = true;
 			var htab = Id.handle({ position: 0 });
 			var file_name = storage.file.substring(storage.file.lastIndexOf("/") + 1);
 			if (ui.tab(htab, file_name + (storage.modified ? "*" : ""))) {
@@ -183,11 +189,17 @@ class Main {
 			resizing_sidebar = false;
 		}
 
+		// Minimap controls
 		var minimap_x = System.windowWidth() - minimap_w;
 		var minimap_y = window_header_h + 1;
-		var minimap_h = System.windowHeight();
 		var redraw = false;
-		if (ui.inputDown && hitTest(ui.inputX, ui.inputY, minimap_x, minimap_y, minimap_w, minimap_h)) {
+		if (ui.inputStarted && hit_test(ui.inputX, ui.inputY, minimap_x + 5, minimap_y, minimap_w, minimap_h)) {
+			minimap_scrolling = true;
+		}
+		if (!ui.inputDown) {
+			minimap_scrolling = false;
+		}
+		if (minimap_scrolling) {
 			editor_handle.scrollOffset -= ui.inputDY * ui.ELEMENT_H() / 2;
 			redraw = true;
 		}
@@ -198,9 +210,23 @@ class Main {
 			editor_handle.redraws = 2;
 		}
 
-		g.begin(false);
-		g.drawImage(minimap, minimap_x, minimap_y);
-		g.end();
+		if (minimap != null) {
+			g.begin(false);
+			g.drawImage(minimap, minimap_x, minimap_y);
+			g.end();
+		}
+
+		if (editor_updated) {
+			draw_minimap();
+		}
+	}
+
+	static function draw_minimap() {
+		if (minimap_h != System.windowHeight()) {
+			minimap_h = System.windowHeight();
+			if (minimap != null) minimap.unload();
+			minimap = kha.Image.createRenderTarget(minimap_w, minimap_h);
+		}
 
 		minimap.g2.begin(true, 0xff000000);
 		minimap.g2.color = ui.t.BUTTON_HOVER_COL;
@@ -221,7 +247,7 @@ class Main {
 		minimap.g2.end();
 	}
 
-	static function hitTest(mx: Float, my: Float, x: Float, y: Float, w: Float, h: Float): Bool {
+	static function hit_test(mx: Float, my: Float, x: Float, y: Float, w: Float, h: Float): Bool {
 		return mx > x && mx < x + w && my > y && my < y + h;
 	}
 
