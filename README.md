@@ -7,7 +7,7 @@ ArmorPad is a text editor prototype. The goal is to improve text editing & rende
 *Note: If you are compiling git version of ArmorPad, then you need to have a compiler ([Visual Studio](https://visualstudio.microsoft.com/downloads/) - Windows, [clang](https://clang.llvm.org/get_started.html) + [deps](https://github.com/armory3d/armorpaint/wiki/Linux-Dependencies) - Linux, [Xcode](https://developer.apple.com/xcode/resources/) - macOS) and [git](https://git-scm.com/downloads) installed.*
 
 ```bash
-git clone --recursive https://github.com/armory3d/armorpad
+git clone --recursive https://github.com/luboslenco/armorpad
 cd armorpad
 ```
 
